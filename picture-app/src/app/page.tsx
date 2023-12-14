@@ -17,24 +17,10 @@ export default function Home() {
   const [sort, setSort] = useState('');
 
   function nextPage(){
-    if(page === Math.ceil(limit/photos.length)){
-      setDesNext(true);
-    } else {
-      setPage(page+1);
-    }
-    if(page > 1){
-      setDesPrev(false);
-    }
+    setPage(page+1);
   }
   function prevPage(){
-    if(page === 1){
-      setDesPrev(true);
-    } else {
-      setPage(page-1);
-    }
-    if(page < Math.ceil(limit/photos.length)){
-      setDesPrev(false);
-    }
+    setPage(page-1);
   }
 
   useEffect(() => {
@@ -44,13 +30,21 @@ export default function Home() {
       setLimit(data?.headers['x-total'])
     }
     photo();
-    console.log(sort)
   },[page, sort])
 
   useEffect(() => {
-    console.log(photos)
-    console.log(limit)
-  })
+    if(page === 1){
+      setDesPrev(true);
+      setDesNext(false);
+    } else if (page === Math.ceil(limit/photos.length)){
+      setDesPrev(false);
+      setDesNext(true);
+    } else {
+      setDesNext(false);
+      setDesPrev(false);
+    }
+  }, [page, limit, photos])
+  
   return (
     <Container className='mt-5'>
       <Header/>
