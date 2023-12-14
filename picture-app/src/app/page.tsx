@@ -2,11 +2,13 @@
 import { getPhotos } from '@/api/photos';
 import Header from '@/components/header';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap-icons/font/bootstrap-icons.css';
 import { useEffect, useState } from 'react';
 import { Col, Form, Pagination, Row } from 'react-bootstrap';
 import Container from 'react-bootstrap/Container';
 //import Image from 'next/image'
 import Image from 'react-bootstrap/Image';
+import { useRouter } from 'next/navigation';
 
 export default function Home() {
   const [photos, setPhotos] = useState<any>([]);
@@ -15,6 +17,10 @@ export default function Home() {
   const [desPrev, setDesPrev] = useState(true);
   const [desNext, setDesNext] = useState(false);
   const [sort, setSort] = useState('');
+  const router = useRouter();
+  let favs = localStorage.getItem('favs');
+  const [favorites, setFavorites] = useState<any>(favs ?  JSON.parse(favs) : []);
+  
 
   function nextPage(){
     setPage(page+1);
@@ -45,6 +51,26 @@ export default function Home() {
     }
   }, [page, limit, photos])
 
+  useEffect(() => {
+    localStorage.setItem('favs', JSON.stringify(favorites))
+  }, [favorites])
+
+  useEffect(() => {
+
+  },[])
+
+  function addFavorites(id: string){
+    if(localStorage.getItem('auth') === 'ok'){
+      if(favorites.includes(id)){
+        setFavorites(favorites.filter((e:string) => e !== id))
+      }else{
+        setFavorites(favorites.concat(id))
+      }
+    } else {
+      router.push('/login');
+    }
+  }
+
   return (
     <Container className='mt-5'>
       <Header/>
@@ -61,7 +87,7 @@ export default function Home() {
       </Row>
       <div style={{columnCount:2}}>
         {
-         photos && photos.map((el: any) => <Col key={el.id}><Image src={el.urls.regular} alt='picture' fluid className='mb-3'/></Col>)
+         photos && photos.map((el: any) => <Col key={el.id} className='position-relative'><Image src={el.urls.regular} alt='picture' fluid className='mb-3'/><i id={el.id} className={`bi bi-star${favorites.includes(el.id) ? '-fill' : ''} pe-1 position-absolute top-0 end-0 text-warning`} style={{cursor: 'pointer'}} onClick={() => addFavorites(el.id)}></i></Col>)
         }
       </div>
       <Pagination className='justify-content-around'>
