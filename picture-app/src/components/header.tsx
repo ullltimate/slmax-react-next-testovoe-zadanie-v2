@@ -11,9 +11,18 @@ export default function Header() {
 				</Link>
 			</Col>
       <Col className='text-end'>
-				<Link prefetch={false} href={'/login'} className='text-decoration-none text-black'>
-					Log In
-				</Link>
+				<Row>
+					<Col>
+						<Link prefetch={false} href={'/login'} className='link-dark link-offset-2 link-underline-opacity-0 link-underline-opacity-100-hover'>
+							Log In
+						</Link>
+					</Col>
+					<Col lg={3}>
+						<Link prefetch={false} href={'/signup'} className='link-dark link-offset-2 link-underline-opacity-0 link-underline-opacity-100-hover'>
+							Sign Up
+						</Link>
+					</Col>
+				</Row>
 			</Col>
     </Row>
   )

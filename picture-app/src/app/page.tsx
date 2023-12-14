@@ -44,7 +44,7 @@ export default function Home() {
       setDesPrev(false);
     }
   }, [page, limit, photos])
-  
+
   return (
     <Container className='mt-5'>
       <Header/>
@@ -59,14 +59,14 @@ export default function Home() {
           </Form.Select>
         </Col>
       </Row>
-      <div style={{columnCount:3}}>
+      <div style={{columnCount:2}}>
         {
          photos && photos.map((el: any) => <Col key={el.id}><Image src={el.urls.regular} alt='picture' fluid className='mb-3'/></Col>)
         }
       </div>
       <Pagination className='justify-content-around'>
-        <Pagination.Prev disabled={desPrev} style={{width:'100px'}} className='text-align-center' onClick={() => prevPage()}>Previos</Pagination.Prev>
-        <Pagination.Next disabled={desNext} style={{width:'100px'}} className='text-align-center' onClick={() => nextPage()}>Next</Pagination.Next>
+        <Pagination.Prev disabled={desPrev} style={{width:'100px'}} className='text-center' onClick={() => prevPage()}>Previos</Pagination.Prev>
+        <Pagination.Next disabled={desNext} style={{width:'100px'}} className='text-center' onClick={() => nextPage()}>Next</Pagination.Next>
       </Pagination>
     </Container>
   )

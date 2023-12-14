@@ -9,7 +9,7 @@ export default function Login() {
       <Header/>
 			<Row style={{ height: '80vh' }} className='align-items-center'>
 				<Col>
-					<Card style={{ width: '36rem' }} className="mx-auto text-center">
+					<Card style={{ width: '26rem' }} className="mx-auto text-center">
 						<h3 className="m-3">Authorization</h3>
 						<Form>
 							<FloatingLabel
