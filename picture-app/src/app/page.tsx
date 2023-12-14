@@ -3,7 +3,7 @@ import { getPhotos } from '@/api/photos';
 import Header from '@/components/header';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useEffect, useState } from 'react';
-import { Col, Pagination, Row } from 'react-bootstrap';
+import { Col, Form, Pagination, Row } from 'react-bootstrap';
 import Container from 'react-bootstrap/Container';
 //import Image from 'next/image'
 import Image from 'react-bootstrap/Image';
@@ -14,6 +14,7 @@ export default function Home() {
   const [limit, setLimit] = useState(1);
   const [desPrev, setDesPrev] = useState(true);
   const [desNext, setDesNext] = useState(false);
+  const [sort, setSort] = useState('');
 
   function nextPage(){
     if(page === Math.ceil(limit/photos.length)){
@@ -38,12 +39,13 @@ export default function Home() {
 
   useEffect(() => {
     async function photo() {
-      const data = await getPhotos(page);
+      const data = await getPhotos(page, sort);
       setPhotos(data?.data);
       setLimit(data?.headers['x-total'])
     }
     photo();
-  },[page])
+    console.log(sort)
+  },[page, sort])
 
   useEffect(() => {
     console.log(photos)
@@ -52,6 +54,17 @@ export default function Home() {
   return (
     <Container className='mt-5'>
       <Header/>
+      <Row className='mb-3'>
+        <Col></Col>
+        <Col lg={2} md={3}>
+          <Form.Select aria-label="Default select example" onChange={(e: any) => setSort(e.target.value)}>
+            <option>Sort</option>
+            <option value="latest">latest</option>
+            <option value="oldest">oldest</option>
+            <option value="popular">popular</option>
+          </Form.Select>
+        </Col>
+      </Row>
       <div style={{columnCount:3}}>
         {
          photos && photos.map((el: any) => <Col key={el.id}><Image src={el.urls.regular} alt='picture' fluid className='mb-3'/></Col>)
