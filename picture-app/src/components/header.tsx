@@ -4,7 +4,7 @@ import Link from 'next/link';
 
 export default function Header() {
   return (
-    <Row className='justify-content-between align-items-center'>
+    <Row className='justify-content-between align-items-center mb-3'>
       <Col>
 				<Link prefetch={false} href={"/"} className='text-decoration-none text-black'>
 					<h1 className='text-uppercase'>Pictures</h1>
