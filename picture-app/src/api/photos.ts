@@ -15,3 +15,18 @@ export const getPhotos = async (page: number, sort: string) => {
         console.log(error)
     }
 }
+
+export const getPhoto = async (id: string) => {
+    try {
+        const response = await axios.get(`${urlAPI}/photos/${id}`, {
+            headers: {
+                'Accept-Version': 'v1',
+                'Authorization': `Client-ID ${process.env.ACCESS_KEY}`
+            }
+        });
+        console.log(response)
+        return response.data;
+    } catch (error: any) {
+        console.log(error)
+    }
+}

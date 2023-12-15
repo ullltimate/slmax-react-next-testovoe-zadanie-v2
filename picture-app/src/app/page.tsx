@@ -55,10 +55,6 @@ export default function Home() {
     localStorage.setItem('favs', JSON.stringify(favorites))
   }, [favorites])
 
-  useEffect(() => {
-
-  },[])
-
   function addFavorites(id: string){
     if(localStorage.getItem('auth') === 'ok'){
       if(favorites.includes(id)){
