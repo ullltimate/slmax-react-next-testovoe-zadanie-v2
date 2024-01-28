@@ -4,11 +4,9 @@ import Header from '@/components/header';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import { useEffect, useState } from 'react';
-import { Col, Form, Pagination, Row } from 'react-bootstrap';
+import { Button, Col, Form, Pagination, Row } from 'react-bootstrap';
 import Container from 'react-bootstrap/Container';
-//import Image from 'next/image'
 import Image from 'react-bootstrap/Image';
-import { useRouter } from 'next/navigation';
 
 export default function Home() {
   const [photos, setPhotos] = useState<any>([]);
@@ -17,8 +15,7 @@ export default function Home() {
   const [desPrev, setDesPrev] = useState(true);
   const [desNext, setDesNext] = useState(false);
   const [sort, setSort] = useState('');
-  const router = useRouter();
-  let favs = localStorage.getItem('favs');
+  let favs = localStorage.getItem('favs') || null;
   const [favorites, setFavorites] = useState<any>(favs ?  JSON.parse(favs) : []);
   
 
@@ -56,15 +53,7 @@ export default function Home() {
   }, [favorites])
 
   function addFavorites(id: string){
-    if(localStorage.getItem('auth') === 'ok'){
-      if(favorites.includes(id)){
-        setFavorites(favorites.filter((e:string) => e !== id))
-      }else{
-        setFavorites(favorites.concat(id))
-      }
-    } else {
-      router.push('/login');
-    }
+    (favorites.includes(id)) ? setFavorites(favorites.filter((e:string) => e !== id)) : setFavorites(favorites.concat(id))
   }
 
   return (
@@ -87,8 +76,8 @@ export default function Home() {
         }
       </div>
       <Pagination className='justify-content-around'>
-        <Pagination.Prev disabled={desPrev} style={{width:'100px'}} className='text-center' onClick={() => prevPage()}>Previos</Pagination.Prev>
-        <Pagination.Next disabled={desNext} style={{width:'100px'}} className='text-center' onClick={() => nextPage()}>Next</Pagination.Next>
+        <Pagination.Prev disabled={desPrev} style={{ top: '50%', left: 5}} className='align-items-center position-fixed' onClick={() => prevPage()}><h2><i className="bi bi-chevron-compact-left"></i></h2></Pagination.Prev>
+        <Pagination.Next disabled={desNext} style={{ top: '50%', right: 5}} className='align-items-center position-fixed' onClick={() => nextPage()}><h2><i className="bi bi-chevron-compact-right"></i></h2></Pagination.Next>
       </Pagination>
     </Container>
   )

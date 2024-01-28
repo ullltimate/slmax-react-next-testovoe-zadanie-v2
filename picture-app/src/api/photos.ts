@@ -9,7 +9,6 @@ export const getPhotos = async (page: number, sort: string) => {
                 'Authorization': `Client-ID ${process.env.ACCESS_KEY}`
             }
         });
-        console.log(response)
         return response;
     } catch (error: any) {
         console.log(error)
@@ -24,7 +23,6 @@ export const getPhoto = async (id: string) => {
                 'Authorization': `Client-ID ${process.env.ACCESS_KEY}`
             }
         });
-        console.log(response)
         return response.data;
     } catch (error: any) {
         console.log(error)
