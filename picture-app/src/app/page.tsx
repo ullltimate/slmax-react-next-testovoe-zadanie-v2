@@ -1,95 +1,84 @@
-import Image from 'next/image'
-import styles from './page.module.css'
+"use client";
+import { getPhotos } from '@/api/photos';
+import Header from '@/components/header';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap-icons/font/bootstrap-icons.css';
+import { useEffect, useState } from 'react';
+import { Button, Col, Form, Pagination, Row } from 'react-bootstrap';
+import Container from 'react-bootstrap/Container';
+import Image from 'react-bootstrap/Image';
 
 export default function Home() {
+  const [photos, setPhotos] = useState<any>([]);
+  const [page, setPage] = useState(1)
+  const [limit, setLimit] = useState(1);
+  const [desPrev, setDesPrev] = useState(true);
+  const [desNext, setDesNext] = useState(false);
+  const [sort, setSort] = useState('');
+  let favs = localStorage.getItem('favs') || null;
+  const [favorites, setFavorites] = useState<any>(favs ?  JSON.parse(favs) : []);
+  
+
+  function nextPage(){
+    setPage(page+1);
+  }
+  function prevPage(){
+    setPage(page-1);
+  }
+
+  useEffect(() => {
+    async function photo() {
+      const data = await getPhotos(page, sort);
+      setPhotos(data?.data);
+      setLimit(data?.headers['x-total'])
+    }
+    photo();
+  },[page, sort])
+
+  useEffect(() => {
+    if(page === 1){
+      setDesPrev(true);
+      setDesNext(false);
+    } else if (page === Math.ceil(limit/photos.length)){
+      setDesPrev(false);
+      setDesNext(true);
+    } else {
+      setDesNext(false);
+      setDesPrev(false);
+    }
+  }, [page, limit, photos])
+
+  useEffect(() => {
+    localStorage.setItem('favs', JSON.stringify(favorites))
+  }, [favorites])
+
+  function addFavorites(id: string){
+    (favorites.includes(id)) ? setFavorites(favorites.filter((e:string) => e !== id)) : setFavorites(favorites.concat(id))
+  }
+
   return (
-    <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>src/app/page.tsx</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
+    <Container className='mt-5'>
+      <Header/>
+      <Row className='mb-3'>
+        <Col></Col>
+        <Col lg={2} md={3}>
+          <Form.Select aria-label="Default select example" onChange={(e: any) => setSort(e.target.value)}>
+            <option>Sort</option>
+            <option value="latest">latest</option>
+            <option value="oldest">oldest</option>
+            <option value="popular">popular</option>
+          </Form.Select>
+        </Col>
+      </Row>
+      <div style={{columnCount:2}}>
+        {
+         photos && photos.map((el: any) => <Col key={el.id} className='position-relative'><Image src={el.urls.regular} alt='picture' fluid className='mb-3'/><i id={el.id} className={`bi bi-star${favorites.includes(el.id) ? '-fill' : ''} pe-1 position-absolute top-0 end-0 text-warning`} style={{cursor: 'pointer'}} onClick={() => addFavorites(el.id)}></i></Col>)
+        }
       </div>
-
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className={styles.grid}>
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p>Find in-depth information about Next.js features and API.</p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Learn <span>-&gt;</span>
-          </h2>
-          <p>Learn about Next.js in an interactive course with&nbsp;quizzes!</p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p>Explore starter templates for Next.js.</p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
+      <Pagination className='justify-content-around'>
+        <Pagination.Prev disabled={desPrev} style={{ top: '50%', left: 5}} className='align-items-center position-fixed' onClick={() => prevPage()}><h2><i className="bi bi-chevron-compact-left"></i></h2></Pagination.Prev>
+        <Pagination.Next disabled={desNext} style={{ top: '50%', right: 5}} className='align-items-center position-fixed' onClick={() => nextPage()}><h2><i className="bi bi-chevron-compact-right"></i></h2></Pagination.Next>
+      </Pagination>
+    </Container>
   )
 }
