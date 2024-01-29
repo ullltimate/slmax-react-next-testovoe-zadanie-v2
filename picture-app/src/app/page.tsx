@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react';
 import { Button, Col, Form, Pagination, Row } from 'react-bootstrap';
 import Container from 'react-bootstrap/Container';
 import Image from 'react-bootstrap/Image';
+import Picture from '@/components/modal';
 
 export default function Home() {
   const [photos, setPhotos] = useState<any>([]);
@@ -17,6 +18,7 @@ export default function Home() {
   const [sort, setSort] = useState('');
   let favs = localStorage.getItem('favs') || null;
   const [favorites, setFavorites] = useState<any>(favs ?  JSON.parse(favs) : []);
+  const [modalShow, setModalShow] = useState(false);
   
 
   function nextPage(){
@@ -72,13 +74,17 @@ export default function Home() {
       </Row>
       <div style={{columnCount:2}}>
         {
-         photos && photos.map((el: any) => <Col key={el.id} className='position-relative'><Image src={el.urls.regular} alt='picture' fluid className='mb-3'/><i id={el.id} className={`bi bi-star${favorites.includes(el.id) ? '-fill' : ''} pe-1 position-absolute top-0 end-0 text-warning`} style={{cursor: 'pointer'}} onClick={() => addFavorites(el.id)}></i></Col>)
+         photos && photos.map((el: any) => <Col key={el.id} className='position-relative'><Image src={el.urls.regular} alt='picture' fluid className='mb-3' onClick={() => setModalShow(true)}/><i id={el.id} className={`bi bi-star${favorites.includes(el.id) ? '-fill' : ''} pe-1 position-absolute top-0 end-0 text-warning`} style={{cursor: 'pointer'}} onClick={() => addFavorites(el.id)}></i></Col>)
         }
       </div>
       <Pagination className='justify-content-around'>
         <Pagination.Prev disabled={desPrev} style={{ top: '50%', left: 5}} className='align-items-center position-fixed' onClick={() => prevPage()}><h2><i className="bi bi-chevron-compact-left"></i></h2></Pagination.Prev>
         <Pagination.Next disabled={desNext} style={{ top: '50%', right: 5}} className='align-items-center position-fixed' onClick={() => nextPage()}><h2><i className="bi bi-chevron-compact-right"></i></h2></Pagination.Next>
       </Pagination>
+      <Picture
+        show={modalShow}
+        onHide={() => setModalShow(false)}
+      />
     </Container>
   )
 }
