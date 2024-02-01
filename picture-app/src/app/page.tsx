@@ -4,9 +4,10 @@ import Header from '@/components/header';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import { useEffect, useState } from 'react';
-import { Button, Col, Form, Pagination, Row } from 'react-bootstrap';
+import { Col, Form, Pagination, Row } from 'react-bootstrap';
 import Container from 'react-bootstrap/Container';
 import Image from 'react-bootstrap/Image';
+import Picture from '@/components/modal';
 
 export default function Home() {
   const [photos, setPhotos] = useState<any>([]);
@@ -15,9 +16,9 @@ export default function Home() {
   const [desPrev, setDesPrev] = useState(true);
   const [desNext, setDesNext] = useState(false);
   const [sort, setSort] = useState('');
-  let favs = localStorage.getItem('favs') || null;
-  const [favorites, setFavorites] = useState<any>(favs ?  JSON.parse(favs) : []);
-  
+  const [modalShow, setModalShow] = useState(false);
+  const [modalImg, setModalImg] = useState('');
+  const [idImg, setIdImg] = useState('');
 
   function nextPage(){
     setPage(page+1);
@@ -48,14 +49,6 @@ export default function Home() {
     }
   }, [page, limit, photos])
 
-  useEffect(() => {
-    localStorage.setItem('favs', JSON.stringify(favorites))
-  }, [favorites])
-
-  function addFavorites(id: string){
-    (favorites.includes(id)) ? setFavorites(favorites.filter((e:string) => e !== id)) : setFavorites(favorites.concat(id))
-  }
-
   return (
     <Container className='mt-5'>
       <Header/>
@@ -72,13 +65,19 @@ export default function Home() {
       </Row>
       <div style={{columnCount:2}}>
         {
-         photos && photos.map((el: any) => <Col key={el.id} className='position-relative'><Image src={el.urls.regular} alt='picture' fluid className='mb-3'/><i id={el.id} className={`bi bi-star${favorites.includes(el.id) ? '-fill' : ''} pe-1 position-absolute top-0 end-0 text-warning`} style={{cursor: 'pointer'}} onClick={() => addFavorites(el.id)}></i></Col>)
+         photos && photos.map((el: any) => <Col key={el.id} className='position-relative'><Image src={el.urls.regular} alt='picture' fluid className='mb-3' onClick={() => {setModalShow(true); setModalImg(el.urls.regular); setIdImg(el.id)}}/></Col>)
         }
       </div>
       <Pagination className='justify-content-around'>
         <Pagination.Prev disabled={desPrev} style={{ top: '50%', left: 5}} className='align-items-center position-fixed' onClick={() => prevPage()}><h2><i className="bi bi-chevron-compact-left"></i></h2></Pagination.Prev>
         <Pagination.Next disabled={desNext} style={{ top: '50%', right: 5}} className='align-items-center position-fixed' onClick={() => nextPage()}><h2><i className="bi bi-chevron-compact-right"></i></h2></Pagination.Next>
       </Pagination>
+      <Picture
+        show={modalShow}
+        img={modalImg}
+        id={idImg}
+        onHide={() => setModalShow(false)}
+      />
     </Container>
   )
 }

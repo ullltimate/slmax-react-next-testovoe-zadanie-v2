@@ -1,7 +1,6 @@
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
 
 export default function Header(props: any) {
 
